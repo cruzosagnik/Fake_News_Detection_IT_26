@@ -38,6 +38,6 @@ The processed dataframe (`df`) uses a simplified schema for optimal training:
 2. Install dependencies: pip install -r requirements.txt
 3. Open Fake_News_Detection_2.ipynb and run all cells.
 
-[!img_alt](https://github.com/Rupayan24/Fake_News_Detection_IT_26/blob/d572645856217f41614135155a21efbf5360b62e/Prototype_SS/Screenshot%202026-04-30%20184143.png)
+![image alt](https://github.com/Rupayan24/Fake_News_Detection_IT_26/blob/d572645856217f41614135155a21efbf5360b62e/Prototype_SS/Screenshot%202026-04-30%20184143.png)
 
 
