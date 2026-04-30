@@ -41,3 +41,6 @@ The processed dataframe (`df`) uses a simplified schema for optimal training:
 ![image alt](https://github.com/Rupayan24/Fake_News_Detection_IT_26/blob/d572645856217f41614135155a21efbf5360b62e/Prototype_SS/Screenshot%202026-04-30%20184143.png)
 
 
+![image alt](https://github.com/Rupayan24/Fake_News_Detection_IT_26/blob/a5b37ca5c189586b8d2a5f9895858edaf84133b1/Prototype_SS/Screenshot%202026-04-30%20184207.png)
+
+
