@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Verify | Fake News Detection System</title>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary-accent: #00f2fe;
+            --secondary-accent: #4facfe;
+            --success-green: #00ff88;
+            --error-red: #ff4b2b;
+            --bg-dark: #0b0e14;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-main: #ffffff;
+            --text-muted: #a0aec0;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top right, #1a1a2e, #0b0e14);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* --- NAVBAR --- */
+        nav {
+            width: 100%;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(11, 14, 20, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+            border-radius: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-accent);
+        }
+
+        /* --- MAIN CONTENT --- */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            perspective: 1000px;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: cardAppear 0.8s ease-out;
+            text-align: center;
+        }
+
+        @keyframes cardAppear {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #fff, var(--primary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-size: 1rem;
+        }
+
+        /* --- INPUT SECTION --- */
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.25rem;
+            color: #fff;
+            font-size: 1rem;
+            resize: none;
+            transition: var(--transition);
+            outline: none;
+            line-height: 1.6;
+        }
+
+        textarea:focus {
+            border-color: var(--primary-accent);
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.1);
+        }
+
+        .counter-box {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* --- BUTTONS --- */
+        .btn-check {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 15px -3px rgba(0, 242, 254, 0.3);
+        }
+
+        .btn-check:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -5px rgba(0, 242, 254, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .btn-check:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-check:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* --- LOADER --- */
+        .loader {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-top: 3px solid #000;
+            border-radius: 50%;
+            display: none;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- RESULT AREA --- */
+        .result-area {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 16px;
+            display: none;
+            animation: slideUp 0.4s ease-out;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-status {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .real-news { color: var(--success-green); }
+        .fake-news { color: var(--error-red); }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        footer strong {
+            color: var(--primary-accent);
+        }
+
+        /* --- RESPONSIVENESS --- */
+        @media (max-width: 640px) {
+            .glass-card {
+                padding: 1.5rem;
+                border-radius: 16px;
+            }
+            header h1 {
+                font-size: 1.6rem;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">
+            <div class="logo-icon"></div>
+            AI.Verify
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#technology">Technology</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="container">
+            <div class="glass-card">
+                <header>
+                    <h1>Fake News Detection System</h1>
+                    <p>Harnessing artificial intelligence to safeguard the truth.</p>
+                </header>
+
+                <div class="input-wrapper">
+                    <textarea id="newsInput" placeholder="Paste the article content or headline here for analysis..."></textarea>
+                    <div class="counter-box">
+                        <span id="charCount">0</span> / 5000 characters
+                    </div>
+                </div>
+
+                <button id="checkBtn" class="btn-check">
+                    <div id="loader" class="loader"></div>
+                    <span id="btnText">Check Authenticity</span>
+                </button>
+
+                <div id="resultArea" class="result-area">
+                    <div class="result-label">AI Analysis Report</div>
+                    <div id="resultStatus" class="result-status"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Developed by <strong>Team AI Guardians</strong> &copy; 2024</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const newsInput = document.getElementById('newsInput');
+            const charCount = document.getElementById('charCount');
+            const checkBtn = document.getElementById('checkBtn');
+            const btnText = document.getElementById('btnText');
+            const loader = document.getElementById('loader');
+            const resultArea = document.getElementById('resultArea');
+            const resultStatus = document.getElementById('resultStatus');
+
+            // 1. Character Counter
+            newsInput.addEventListener('input', () => {
+                const length = newsInput.value.length;
+                charCount.textContent = length;
+
+                // Simple visual warning for max length
+                if (length > 5000) {
+                    newsInput.value = newsInput.value.substring(0, 5000);
+                    charCount.textContent = 5000;
+                    charCount.style.color = '#ff4b2b';
+                } else {
+                    charCount.style.color = 'var(--text-muted)';
+                }
+            });
+
+            // 2. Fake News Check Logic (Simulation)
+            checkBtn.addEventListener('click', async () => {
+                const text = newsInput.value.trim();
+
+                if (text === "") {
+                    showTemporaryMessage("Please enter some text to analyze.");
+                    return;
+                }
+
+                if (text.length < 30) {
+                    showTemporaryMessage("Text is too short for a reliable AI analysis.");
+                    return;
+                }
+
+                // Enter Loading State
+                setLoading(true);
+
+                // Simulate API call delay (1.5s - 2.5s)
+                const processingTime = Math.floor(Math.random() * 1000) + 1500;
+                
+                setTimeout(() => {
+                    // MOCK LOGIC: 
+                    // In a real app, you would send 'text' to your Python/Node backend here.
+                    const isFake = Math.random() < 0.4; // 40% chance of fake for demo
+                    
+                    showResult(isFake);
+                    setLoading(false);
+                }, processingTime);
+            });
+
+            function setLoading(isLoading) {
+                if (isLoading) {
+                    checkBtn.disabled = true;
+                    btnText.textContent = "Analyzing Patterns...";
+                    loader.style.display = "block";
+                    resultArea.style.display = "none";
+                    newsInput.disabled = true;
+                } else {
+                    checkBtn.disabled = false;
+                    btnText.textContent = "Check Authenticity";
+                    loader.style.display = "none";
+                    newsInput.disabled = false;
+                }
+            }
+
+            function showResult(isFake) {
+                resultArea.style.display = "block";
+                
+                if (isFake) {
+                    resultStatus.textContent = "FAKE NEWS DETECTED";
+                    resultStatus.className = "result-status fake-news";
+                } else {
+                    resultStatus.textContent = "REAL NEWS VERIFIED";
+                    resultStatus.className = "result-status real-news";
+                }
+
+                // Smooth scroll to result on mobile
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            function showTemporaryMessage(msg) {
+                const originalText = btnText.textContent;
+                btnText.textContent = msg;
+                checkBtn.style.background = "var(--error-red)";
+                
+                setTimeout(() => {
+                    btnText.textContent = originalText;
+                    checkBtn.style.background = ""; // reverts to CSS gradient
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>
